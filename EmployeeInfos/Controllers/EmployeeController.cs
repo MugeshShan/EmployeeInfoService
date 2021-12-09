@@ -2,6 +2,7 @@
 using EmployeeInfos.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Rendering;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -16,11 +17,28 @@ namespace EmployeeInfos.Controllers
         {
             employeeServices = _employeeServices;
         }
+
         // GET: EmployeeController
-        public ActionResult Index(int? id)
+        public ActionResult Index()
         {
             var employees = employeeServices.GetAllEmployess();
             return View(employees);
+        }
+
+        [HttpPost]
+        public ActionResult Index(int? id)
+        {
+            var dropDown = new List<SelectListItem>
+            {
+               new SelectListItem{ Text="Name", Value = "Name" },
+               new SelectListItem{ Text="Hourly Rate", Value = "HourlyRate" },
+               new SelectListItem{ Text="Department", Value = "Department" }
+            };
+            ViewBag.dropDownValue = dropDown;
+            var selectedProperty = Request.Form["FindBy"].ToString();
+            var value = Request.Form["findByValue"].ToString();
+            var employees = employeeServices.FindByProperty(selectedProperty, value);
+            return View(employees); ;
         }
 
         // GET: EmployeeController/Details/5

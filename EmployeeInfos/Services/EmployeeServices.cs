@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 
 namespace EmployeeInfos.Services
 {
@@ -26,6 +27,15 @@ namespace EmployeeInfos.Services
                 string accountDetailsJson = streamReader.ReadToEnd();
                 return JsonConvert.DeserializeObject<EmployeeDetails>(accountDetailsJson).Employees;
             };
+        }
+
+        public List<Employee> FindByProperty(string propertyName, string value)
+        {
+            var allEmployees = GetEmployeeDetails();
+            Type type = allEmployees[0].GetType();
+            PropertyInfo info = type.GetProperty(propertyName);
+            var employeeList = allEmployees.Where(x=> Convert.ToString(info.GetValue(x)) == value).ToList();
+            return employeeList;
         }
 
         public void AddEmployee(Employee employee)
@@ -90,6 +100,26 @@ namespace EmployeeInfos.Services
             {
                 return false;
             }
+        }
+
+        public List<DataPoints> GetEmployeeRegistrationByMonth()
+        {
+            List<DataPoints> dataPoints = new List<DataPoints>();
+            dataPoints.Add(new DataPoints("Jan", 72));
+            dataPoints.Add(new DataPoints("Feb", 67));
+            dataPoints.Add(new DataPoints("Mar", 55));
+            dataPoints.Add(new DataPoints("Apr", 42));
+            dataPoints.Add(new DataPoints("May", 40));
+            dataPoints.Add(new DataPoints("Jun", 35));
+
+            dataPoints.Add(new DataPoints("Jul", 48));
+            dataPoints.Add(new DataPoints("Aug", 56));
+            dataPoints.Add(new DataPoints("Sep", 50));
+            dataPoints.Add(new DataPoints("Oct", 47));
+            dataPoints.Add(new DataPoints("Nov", 65));
+            dataPoints.Add(new DataPoints("Dec", 69));
+
+            return dataPoints;
         }
     }
 }

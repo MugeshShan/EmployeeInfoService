@@ -1,8 +1,5 @@
 ﻿using EmployeeInfos.Models;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace EmployeeInfos.Services
 {
@@ -15,5 +12,8 @@ namespace EmployeeInfos.Services
 
         bool UpdateEmployee(Employee updateEmployee);
         void AddEmployee(Employee employee);
+        List<Employee> FindByProperty(string propertyName, string value);
+
+        List<DataPoints> GetEmployeeRegistrationByMonth();
     }
 }

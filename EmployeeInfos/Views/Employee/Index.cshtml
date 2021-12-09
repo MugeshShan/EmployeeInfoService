@@ -7,6 +7,19 @@
 }
 
 <h1>Employee List</h1>
+@using (Html.BeginForm("Index", "Employee", FormMethod.Post, new { enctype = "multipart/form-data" }))
+{
+
+    @Html.DropDownList("FindBy", new List<SelectListItem>
+            {
+               new SelectListItem{ Text="Name", Value = "FirstName" },
+               new SelectListItem{ Text="Hourly Rate", Value = "HourlyRate" },
+               new SelectListItem{ Text="Department", Value = "Department" }
+            }, "--Select--")
+    <input id="findByValue" name="findByValue" type="text" />
+    <input type="submit" value="Submit" />
+    <a asp-action="Index">Back to Full List</a>
+}
 
 <p style="text-align:right;margin-right:20px;">
     <a class="btn btn-outline-primary" asp-action="Create">Create New</a>
@@ -74,7 +87,7 @@
                         @Html.DisplayFor(modelItem => item.Designation)
                     </td>
                     <td>
-                        @Html.DisplayFor(modelItem => item.StartDate))
+                        @Html.DisplayFor(modelItem => item.StartDate)
                     </td>
                     <td>
                         @Html.DisplayFor(modelItem => item.EndDate)
