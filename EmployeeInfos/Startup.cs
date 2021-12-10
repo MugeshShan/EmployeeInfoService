@@ -25,6 +25,7 @@ namespace EmployeeInfos
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            // Dependency Injection
             services.AddTransient<IEmployeeServices, EmployeeServices>();
         }
 

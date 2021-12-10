@@ -2,45 +2,59 @@
 using EmployeeInfos.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Rendering;
-using Newtonsoft.Json;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
 
 namespace EmployeeInfos.Controllers
 {
+    /// <summary>
+    /// Employee Controller
+    /// </summary>
     public class EmployeeController : Controller
     {
         private readonly IEmployeeServices employeeServices;
+
+        /// <summary>
+        /// Constructor
+        /// </summary>
+        /// <param name="_employeeServices"></param>
         public EmployeeController(IEmployeeServices _employeeServices)
         {
             employeeServices = _employeeServices;
         }
 
+        /// <summary>
+        /// Controller method to get all employee details
+        /// </summary>
+        /// <returns></returns>
         // GET: EmployeeController
         public ActionResult Index()
         {
             var employees = employeeServices.GetAllEmployess();
+            if(employees.Count == 0)
+            {
+                return NotFound();
+            }
             return View(employees);
         }
 
+        /// <summary>
+        /// Controller method to get employee details by property name
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         [HttpPost]
         public ActionResult Index(int? id)
         {
-            var dropDown = new List<SelectListItem>
-            {
-               new SelectListItem{ Text="Name", Value = "Name" },
-               new SelectListItem{ Text="Hourly Rate", Value = "HourlyRate" },
-               new SelectListItem{ Text="Department", Value = "Department" }
-            };
-            ViewBag.dropDownValue = dropDown;
             var selectedProperty = Request.Form["FindBy"].ToString();
             var value = Request.Form["findByValue"].ToString();
             var employees = employeeServices.FindByProperty(selectedProperty, value);
             return View(employees); ;
         }
 
+        /// <summary>
+        /// COntroller method to get employee details by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: EmployeeController/Details/5
         public ActionResult Details(int? id)
         {
@@ -56,12 +70,21 @@ namespace EmployeeInfos.Controllers
             return View(employee);
         }
 
+        /// <summary>
+        /// Controller method to create a new employee
+        /// </summary>
+        /// <returns></returns>
         // GET: EmployeeController/Create
         public ActionResult Create()
         {
             return View();
         }
 
+        /// <summary>
+        /// Post Controller method to create a employee
+        /// </summary>
+        /// <param name="employeeData"></param>
+        /// <returns></returns>
         // POST: EmployeeController/Create
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -69,8 +92,11 @@ namespace EmployeeInfos.Controllers
         {
             try
             {
-                employeeServices.AddEmployee(employeeData);
-                return RedirectToAction(nameof(Index));
+                if (employeeServices.AddEmployee(employeeData))
+                {
+                    return RedirectToAction(nameof(Index));
+                }
+                return View();
             }
             catch
             {
@@ -78,6 +104,11 @@ namespace EmployeeInfos.Controllers
             }
         }
 
+        /// <summary>
+        /// Controller method to get the employee by id for edit
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: EmployeeController/Edit/5
         public ActionResult Edit(int? id)
         {
@@ -94,6 +125,12 @@ namespace EmployeeInfos.Controllers
             return View(employee);
         }
 
+        /// <summary>
+        /// Controller method to edit the employee
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="employeeData"></param>
+        /// <returns></returns>
         // POST: EmployeeController/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -144,6 +181,11 @@ namespace EmployeeInfos.Controllers
             
         }
 
+        /// <summary>
+        /// Controller method to get employee by id for delete
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // GET: EmployeeController/Delete/5
         public ActionResult Delete(int id)
         {
@@ -151,6 +193,12 @@ namespace EmployeeInfos.Controllers
             return View(employee);
         }
 
+        /// <summary>
+        /// Controller method to delete the employee
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="collection"></param>
+        /// <returns></returns>
         // POST: EmployeeController/Delete/5
         [HttpPost]
         [ValidateAntiForgeryToken]

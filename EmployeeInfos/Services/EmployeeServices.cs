@@ -8,27 +8,37 @@ using System.Reflection;
 
 namespace EmployeeInfos.Services
 {
+    /// <summary>
+    /// Employee Services class
+    /// </summary>
     public class EmployeeServices : IEmployeeServices
     {
+        /// <summary>
+        /// Method to get all employee
+        /// </summary>
+        /// <returns>Employee List</returns>
         public List<Employee> GetAllEmployess()
         {
             return GetEmployeeDetails();
         }
 
+        /// <summary>
+        /// Method to get employee by id
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>Employee</returns>
         public Employee GetEmployeeById(int id)
         {
             var allEmployees = GetEmployeeDetails();
             return allEmployees.Where(x => x.EmpId == id).Select(y => y).FirstOrDefault();
         }
-        private List<Employee> GetEmployeeDetails()
-        {
-            using (var streamReader = new StreamReader(@"Models\EmployeeDetails.json"))
-            {
-                string accountDetailsJson = streamReader.ReadToEnd();
-                return JsonConvert.DeserializeObject<EmployeeDetails>(accountDetailsJson).Employees;
-            };
-        }
 
+        /// <summary>
+        /// Get Employee Details by Property Name
+        /// </summary>
+        /// <param name="propertyName"></param>
+        /// <param name="value"></param>
+        /// <returns>Employee list</returns>
         public List<Employee> FindByProperty(string propertyName, string value)
         {
             var allEmployees = GetEmployeeDetails();
@@ -38,26 +48,33 @@ namespace EmployeeInfos.Services
             return employeeList;
         }
 
-        public void AddEmployee(Employee employee)
+        /// <summary>
+        /// Method to add employee
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <returns>True or False</returns>
+        public bool AddEmployee(Employee employee)
         {
-            var allEmployees = GetEmployeeDetails();
-            var id = allEmployees.Last().EmpId + 1;
-            employee.EmpId = id;
-            allEmployees.Add(employee);
-            WriteEmployeeDetailsJson(allEmployees);
-        }
-
-        private void WriteEmployeeDetailsJson(List<Employee> employeeList)
-        {
-            var employeeDetails = new EmployeeDetails();
-            employeeDetails.Employees = employeeList;
-            using (var streamWriter = new StreamWriter(@"Models\EmployeeDetails.json"))
+            try
             {
-                JsonSerializer serializer = new JsonSerializer();
-                serializer.Serialize(streamWriter, employeeDetails);
-            };
+                var allEmployees = GetEmployeeDetails();
+                var id = allEmployees.Last().EmpId + 1;
+                employee.EmpId = id;
+                allEmployees.Add(employee);
+                WriteEmployeeDetailsJson(allEmployees);
+                return true;
+            }
+            catch
+            {
+                return false;
+            }
         }
 
+        /// <summary>
+        /// Method to update the employee
+        /// </summary>
+        /// <param name="updateEmployee"></param>
+        /// <returns>True or False</returns>
         public bool UpdateEmployee(Employee updateEmployee)
         {
             try
@@ -87,6 +104,11 @@ namespace EmployeeInfos.Services
             }
         }
 
+        /// <summary>
+        /// Method to delete the employee
+        /// </summary>
+        /// <param name="employee"></param>
+        /// <returns>True or False</returns>
         public bool DeleteEmployee(Employee employee)
         {
             try
@@ -102,6 +124,10 @@ namespace EmployeeInfos.Services
             }
         }
 
+        /// <summary>
+        /// Method to get employee registration by month
+        /// </summary>
+        /// <returns>Number of employee and Month</returns>
         public List<DataPoints> GetEmployeeRegistrationByMonth()
         {
             List<DataPoints> dataPoints = new List<DataPoints>();
@@ -120,6 +146,34 @@ namespace EmployeeInfos.Services
             dataPoints.Add(new DataPoints("Dec", 69));
 
             return dataPoints;
+        }
+
+        /// <summary>
+        /// Private method to read employee details from json
+        /// </summary>
+        /// <returns></returns>
+        private List<Employee> GetEmployeeDetails()
+        {
+            using (var streamReader = new StreamReader(@"Models\EmployeeDetails.json"))
+            {
+                string accountDetailsJson = streamReader.ReadToEnd();
+                return JsonConvert.DeserializeObject<EmployeeDetails>(accountDetailsJson).Employees;
+            };
+        }
+
+        /// <summary>
+        /// Write Employee details into the json
+        /// </summary>
+        /// <param name="employeeList"></param>
+        private void WriteEmployeeDetailsJson(List<Employee> employeeList)
+        {
+            var employeeDetails = new EmployeeDetails();
+            employeeDetails.Employees = employeeList;
+            using (var streamWriter = new StreamWriter(@"Models\EmployeeDetails.json"))
+            {
+                JsonSerializer serializer = new JsonSerializer();
+                serializer.Serialize(streamWriter, employeeDetails);
+            };
         }
     }
 }
